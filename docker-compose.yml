@@ -41,5 +41,5 @@ networks:
     driver: bridge
 
 volumes:
-  data:
+  sclab-connector:
     driver: local

@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { config } from 'dotenv';
 import oracledb from 'oracledb';
 
@@ -82,9 +83,20 @@ BigInt.prototype['toJSON'] = function () {
 // enable thick mode
 // https://node-oracledb.readthedocs.io/en/latest/user_guide/initialization.html#enabling-node-oracledb-thick-mode
 if (process.env.ORACLE_CLIENT_DIR) {
-  oracledb.initOracleClient({
-    libDir: process.env.ORACLE_CLIENT_DIR,
-  });
+  console.log('ORACLE_CLIENT_DIR : ' + process.env.ORACLE_CLIENT_DIR);
+  try {
+    oracledb.initOracleClient({
+      libDir: process.env.ORACLE_CLIENT_DIR,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+} else if (process.env.LD_LIBRARY_PATH) {
+  try {
+    oracledb.initOracleClient();
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 export async function DBPool() {
