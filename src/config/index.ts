@@ -79,6 +79,14 @@ BigInt.prototype['toJSON'] = function () {
   return parseInt(this.toString(), 10);
 };
 
+// enable thick mode
+// https://node-oracledb.readthedocs.io/en/latest/user_guide/initialization.html#enabling-node-oracledb-thick-mode
+if (process.env.ORACLE_CLIENT_DIR) {
+  oracledb.initOracleClient({
+    libDir: process.env.ORACLE_CLIENT_DIR,
+  });
+}
+
 export async function DBPool() {
   await oracledb.createPool({
     user: ORACLE_USER,
