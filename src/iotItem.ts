@@ -1,4 +1,4 @@
-import { DBPool, MQTT_TOPIC, ORACLE_MAX_ROW_SIZE, QueryItem } from './config/index';
+import { MQTT_TOPIC, ORACLE_MAX_ROW_SIZE, QueryItem } from './config/index';
 import mqtt from 'mqtt';
 import { logger } from './utils/logger';
 import oracledb from 'oracledb';
