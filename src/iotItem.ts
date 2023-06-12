@@ -1,7 +1,7 @@
-import { DBPool, MQTT_TOPIC, QueryItem } from './config/index';
+import { DBPool, MQTT_TOPIC, ORACLE_MAX_ROW_SIZE, QueryItem } from './config/index';
 import mqtt from 'mqtt';
 import { logger } from './utils/logger';
-import { PoolConnection } from 'mariadb';
+import oracledb from 'oracledb';
 
 export class IOTItem {
   init(client: mqtt.Client, queryItem: QueryItem) {
@@ -14,10 +14,25 @@ export class IOTItem {
         return;
       }
 
-      let conn: PoolConnection;
+      let conn;
+
       try {
-        conn = await DBPool.getConnection();
-        const rows = await conn.query(queryItem.query);
+        conn = await oracledb.getConnection();
+        const result = await conn.execute(queryItem.query, [], {
+          maxRows: (ORACLE_MAX_ROW_SIZE && parseInt(ORACLE_MAX_ROW_SIZE, 10)) || 1000,
+        });
+
+        const rows = [];
+        let row: any[], obj: any;
+        for (let i: number = 0; i < result.rows.length; i++) {
+          obj = {};
+          row = result.rows[i];
+          for (let j: number = 0; j < result.metaData.length; j++) {
+            obj[result.metaData[j].name] = row[j];
+          }
+          rows.push(obj);
+        }
+
         const data = JSON.stringify({
           rows,
         });
@@ -28,7 +43,7 @@ export class IOTItem {
         logger.error(error);
       } finally {
         if (conn) {
-          conn.release();
+          conn.close();
         }
       }
 
