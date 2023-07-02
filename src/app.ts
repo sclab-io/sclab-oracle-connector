@@ -84,6 +84,10 @@ class App {
       logger.info('Skip mybatis loading');
       return;
     }
+    if (!fs.existsSync(MY_BATIS_FILE_FOLDER)) {
+      logger.info('Folder is not exists.');
+      return;
+    }
     logger.info(`Load mybatis mappers from folder path ${MY_BATIS_FILE_FOLDER}.`);
     const files: string[] = [];
     const folderFiles = fs.readdirSync(MY_BATIS_FILE_FOLDER);
