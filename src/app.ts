@@ -31,6 +31,7 @@ import {
   LOG_DIR,
   SQL_INJECTION,
   ORACLE_MAX_ROW_SIZE,
+  MY_BATIS_FILE_FOLDER,
 } from '@config';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
@@ -41,6 +42,9 @@ import fs from 'fs';
 import { jwtMiddleware } from './middlewares/jwt.middleware';
 import { IOT } from './iot';
 import oracledb from 'oracledb';
+import MybatisMapper from 'mybatis-mapper';
+import * as path from 'path';
+import MybatisRoute from './routes/mybatis_route';
 
 class App {
   public app: express.Application;
@@ -59,6 +63,7 @@ class App {
         this.checkConnectionInformation();
         this.initializeMiddlewares();
         this.generateJWTKey();
+        this.loadMybatisFiles();
         this.createAPIRoutes(routes);
         this.initializeRoutes(routes);
         //this.initializeSwagger();
@@ -72,6 +77,26 @@ class App {
         logger.error(e);
         process.exit();
       });
+  }
+
+  public async loadMybatisFiles() {
+    if (!MY_BATIS_FILE_FOLDER) {
+      logger.info('Skip mybatis loading');
+      return;
+    }
+    logger.info(`Load mybatis mappers from folder path ${MY_BATIS_FILE_FOLDER}.`);
+    const files: string[] = [];
+    const folderFiles = fs.readdirSync(MY_BATIS_FILE_FOLDER);
+    folderFiles.forEach(file => {
+      if (!file.endsWith('.xml')) {
+        return;
+      }
+      const filePath = path.join(MY_BATIS_FILE_FOLDER, file);
+      files.push(filePath);
+      logger.info(`mybatis file : ${file}`);
+    });
+
+    MybatisMapper.createMapper(files);
   }
 
   public async checkConnectionInformation() {
@@ -117,6 +142,10 @@ class App {
         const route: Routes = new APIRoute(queryItem);
         routes.push(route);
         logger.info(`API query end point generated: ${queryItem.endPoint}\nSQL: ${queryItem.query}`);
+      } else if (queryItem.type === QueryType.MYBATIS) {
+        const route: Routes = new MybatisRoute(queryItem);
+        routes.push(route);
+        logger.info(`MYBATIS query end point generated: ${queryItem.endPoint}\nNamespace: ${queryItem.namespace}\nQuery ID: ${queryItem.queryId}`);
       }
     }
   }

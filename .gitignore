@@ -132,3 +132,6 @@ dist
 jwt/
 
 client/**/
+
+# mybatis
+mybatis/
