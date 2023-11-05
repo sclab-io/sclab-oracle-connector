@@ -57,7 +57,7 @@ class APIController {
     try {
       sql = this.mappingRequestData(sql, req.query, !!SQL_INJECTION);
     } catch (e) {
-      logger.error(e);
+      console.error(e);
       res.writeHead(400, {
         'Content-Type': 'application/json',
       });
@@ -94,7 +94,7 @@ class APIController {
         }),
       );
     } catch (error) {
-      logger.error(error);
+      console.error(error);
       next(error);
     } finally {
       if (conn) {

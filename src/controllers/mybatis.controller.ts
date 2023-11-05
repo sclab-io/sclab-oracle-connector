@@ -175,7 +175,7 @@ class MybatisController {
         }),
       );
     } catch (error) {
-      logger.error(error);
+      console.error(error);
       next(error);
     } finally {
       if (conn) {

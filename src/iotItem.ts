@@ -40,7 +40,7 @@ export class IOTItem {
         client.publish(topic, Buffer.from(data, 'utf-8'));
         logger.info(`topic: ${topic}, data: ${data}`);
       } catch (error) {
-        logger.error(error);
+        console.error(error);
       } finally {
         if (conn) {
           conn.close();

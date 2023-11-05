@@ -74,7 +74,7 @@ class App {
       })
       .catch(e => {
         logger.info('DB Connection error');
-        logger.error(e);
+        console.error(e);
         process.exit();
       });
   }
@@ -113,7 +113,7 @@ class App {
       logger.info('SQL select check complete.');
       await conn.close();
     } catch (e) {
-      logger.error(e);
+      console.error(e);
       logger.info(`Cannot connect to ORACLE. Please check your .env.${this.env}.local file.`);
       process.exit();
     }
@@ -133,7 +133,7 @@ class App {
       logger.info(`authorization: ${token}`);
       this.app.use(jwtMiddleware);
     } catch (e) {
-      logger.error(e);
+      console.error(e);
     }
   }
 
