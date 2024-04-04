@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
-import { QueryItem, DBPool, SQL_INJECTION, ORACLE_MAX_ROW_SIZE } from '../config/index';
+import { QueryItem, SQL_INJECTION, ORACLE_MAX_ROW_SIZE } from '../config/index';
 import oracledb from 'oracledb';
 import { getPlaceHolders, hasSql, replaceString } from '@/utils/util';
 import { logger } from '@/utils/logger';
 
 class APIController {
-  mappingRequestData(query: string, queryData: any, isCheckInjection: boolean = false): string {
+  mappingRequestData(query: string, queryData: any, isCheckInjection = false): string {
     // data mapping
     const paramKeys = getPlaceHolders(query);
 
@@ -80,10 +80,10 @@ class APIController {
 
       const rows = [];
       let row: any[], obj: any;
-      for (let i: number = 0; i < result.rows.length; i++) {
+      for (let i = 0; i < result.rows.length; i++) {
         obj = {};
         row = result.rows[i];
-        for (let j: number = 0; j < result.metaData.length; j++) {
+        for (let j = 0; j < result.metaData.length; j++) {
           obj[result.metaData[j].name] = row[j];
         }
         rows.push(obj);

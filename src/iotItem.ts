@@ -5,7 +5,7 @@ import oracledb from 'oracledb';
 
 export class IOTItem {
   init(client: mqtt.Client, queryItem: QueryItem) {
-    const topic: string = `${MQTT_TOPIC}${queryItem.topic}`;
+    const topic = `${MQTT_TOPIC}${queryItem.topic}`;
     logger.info(`MQTT push query generated: ${topic}`);
 
     const func = async () => {
@@ -24,10 +24,10 @@ export class IOTItem {
 
         const rows = [];
         let row: any[], obj: any;
-        for (let i: number = 0; i < result.rows.length; i++) {
+        for (let i = 0; i < result.rows.length; i++) {
           obj = {};
           row = result.rows[i];
-          for (let j: number = 0; j < result.metaData.length; j++) {
+          for (let j = 0; j < result.metaData.length; j++) {
             obj[result.metaData[j].name] = row[j];
           }
           rows.push(obj);

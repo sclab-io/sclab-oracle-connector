@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { QueryItem, DBPool, SQL_INJECTION, ORACLE_MAX_ROW_SIZE } from '../config/index';
+import { QueryItem, SQL_INJECTION, ORACLE_MAX_ROW_SIZE } from '../config/index';
 import oracledb from 'oracledb';
 import { logger } from '@/utils/logger';
 import { hasSql } from '@/utils/util';
@@ -9,7 +9,7 @@ class MybatisController {
   public options: any = { language: 'sql', indent: '  ' };
   public queryItem?: QueryItem;
 
-  mappingRequestData(queryData: any, isCheckInjection: boolean = false): string {
+  mappingRequestData(queryData: any, isCheckInjection = false): string {
     // data mapping
     const valueObj = {};
     const paramKeys = Object.keys(queryData);
@@ -110,8 +110,8 @@ class MybatisController {
         keys.forEach(key => {
           const param = this.queryItem.outputParams[key];
           bind[key] = {
-            dir: this.getDir(this.queryItem.outputParams[key].dir),
-            type: this.getType(this.queryItem.outputParams[key].type),
+            dir: this.getDir(param.dir),
+            type: this.getType(param.type),
           };
 
           if (bind[key].dir === oracledb.BIND_IN) {
@@ -136,10 +136,10 @@ class MybatisController {
       const rows = [];
       let row: any[], obj: any;
       if (result.rows) {
-        for (let i: number = 0; i < result.rows.length; i++) {
+        for (let i = 0; i < result.rows.length; i++) {
           obj = {};
           row = result.rows[i];
-          for (let j: number = 0; j < result.metaData.length; j++) {
+          for (let j = 0; j < result.metaData.length; j++) {
             obj[result.metaData[j].name] = row[j];
           }
           rows.push(obj);
@@ -150,13 +150,13 @@ class MybatisController {
         let key: string;
         let temp: any;
         let arr: any[];
-        for (let i: number = 0; i < outBindKeys.length; i++) {
+        for (let i = 0; i < outBindKeys.length; i++) {
           key = outBindKeys[i];
           if (bind[key].type === oracledb.CURSOR) {
             arr = [];
             while ((row = await result.outBinds[key].getRow())) {
               temp = {};
-              for (let j: number = 0; j < result.outBinds[key].metaData.length; j++) {
+              for (let j = 0; j < result.outBinds[key].metaData.length; j++) {
                 temp[result.outBinds[key].metaData[j].name] = row[j];
               }
               arr.push(temp);
